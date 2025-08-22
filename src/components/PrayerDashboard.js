@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import LoadingSpinner from './LoadingSpinner';
 
 const padZero = (num) => num.toString().padStart(2, '0');
 
@@ -79,10 +78,24 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
         }
     }, [currentTime, nextPrayer]);
 
-    if (loading) return <LoadingSpinner />;
     if (error) return <p className="error-message">Vakitler yüklenemedi: {error}</p>;
-    if (!locationInfo) return <p className="info-message">Lütfen konum seçimi yapınız.</p>;
-    if (!todayPrayers) return <p className="info-message">Bugüne ait vakit bilgisi bulunamadı.</p>;
+    
+    // Konum seçimi yapılmamışsa özel bir görüntü göster (loading kontrolü kaldırıldı)
+    if (!locationInfo) {
+        return (
+            <div className="no-location-container">
+                <div className="location-prompt">
+                    <div className="location-icon">
+                        <i className="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h2>Lütfen konum seçimi yapınız</h2>
+                    <p>Namaz vakitlerini görüntülemek<br/>için yukarıdaki menüden ülke,<br/>şehir ve bölge seçimi yapınız.</p>
+                </div>
+            </div>
+        );
+    }
+    
+    if (!todayPrayers) return 
 
     const prayerNames = ["İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı"];
     const prayerTimes = [todayPrayers.fajr, todayPrayers.sun, todayPrayers.dhuhr, todayPrayers.asr, todayPrayers.maghrib, todayPrayers.isha];
@@ -96,7 +109,7 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
     return (
         <div className="prayer-dashboard">
             <div className="location-display">
-                <h2><i className="fas fa-map-marker-alt"></i> {locationInfo.city}</h2>
+                <h2><i className="fas fa-map-marker-alt"></i> {locationInfo.city}, {locationInfo.region}</h2>
                 <p>{locationInfo.country}</p>
             </div>
             <div className="date-display">

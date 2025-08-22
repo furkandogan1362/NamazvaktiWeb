@@ -3,6 +3,7 @@ import axios from 'axios';
 import LocationSelector from './components/LocationSelector';
 import PrayerDashboard from './components/PrayerDashboard';
 import HadisDisplay from './components/HadisDisplay';
+import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
 
 function App() {
@@ -77,17 +78,38 @@ function App() {
       
       <main>
         <LocationSelector onLocationSelect={setLocationInfo} />
-        <div className="main-content-panels">
-          <PrayerDashboard 
-            prayerData={prayerData} 
-            locationInfo={locationInfo}
-            loading={loading} 
-            error={error} 
-          />
-          <div className="right-panels">
+        
+        {/* Spinner'ı bağımsız olarak göster */}
+        {loading && (
+          <div className="loading-overlay">
+            <LoadingSpinner />
+          </div>
+        )}
+        
+        {/* Konum seçimi yapılmamışsa farklı düzen göster */}
+        {!locationInfo ? (
+          <div className="no-location-layout">
+            <PrayerDashboard 
+              prayerData={prayerData} 
+              locationInfo={locationInfo}
+              loading={loading} 
+              error={error} 
+            />
             <HadisDisplay />
           </div>
-        </div>
+        ) : (
+          <div className="main-content-panels">
+            <PrayerDashboard 
+              prayerData={prayerData} 
+              locationInfo={locationInfo}
+              loading={loading} 
+              error={error} 
+            />
+            <div className="right-panels">
+              <HadisDisplay />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

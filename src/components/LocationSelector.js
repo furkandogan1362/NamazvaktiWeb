@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import LoadingSpinner from './LoadingSpinner';
 
 const LocationSelector = ({ onLocationSelect }) => {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
-  const [regions, setRegions] =useState([]);
+  const [regions, setRegions] = useState([]);
 
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
@@ -20,15 +19,12 @@ const LocationSelector = ({ onLocationSelect }) => {
   // 1. Adım: Sayfa yüklendiğinde ülkeleri çek
   useEffect(() => {
     setLoading(prev => ({ ...prev, countries: true }));
-    // API İSTEĞİ GÜNCELLENDİ: Tam adres yerine sadece yolu yazıyoruz.
     axios.get('/api/diyanet/countries')
       .then(response => {
-        // LOG EKLENDİ: Gelen veriyi konsola yazdırıyoruz.
         console.log("Ülkeler API Yanıtı:", response.data); 
         setCountries(response.data);
       })
       .catch(error => {
-        // LOG EKLENDİ: Hata durumunda hatayı konsola yazdırıyoruz.
         console.error("Ülkeler yüklenirken hata oluştu:", error);
       })
       .finally(() => setLoading(prev => ({ ...prev, countries: false })));
@@ -42,30 +38,44 @@ const LocationSelector = ({ onLocationSelect }) => {
       setSelectedCity('');
       setSelectedRegionId('');
       setLoading(prev => ({ ...prev, cities: true }));
-      // API İSTEĞİ GÜNCELLENDİ
       axios.get(`/api/diyanet/countries/${selectedCountry}/cities`)
         .then(response => {
-          console.log("Şehirler API Yanıtı:", response.data); // LOG EKLENDİ
+          console.log("Şehirler API Yanıtı:", response.data);
           setCities(response.data);
         })
-        .catch(error => console.error("Şehirler yüklenirken hata oluştu:", error)) // LOG EKLENDİ
+        .catch(error => console.error("Şehirler yüklenirken hata oluştu:", error))
         .finally(() => setLoading(prev => ({ ...prev, cities: false })));
     }
   }, [selectedCountry]);
 
-  // 3. Adım: Bir şehir seçildiğinde o şehrin bölgelerini çek
+  // 3. Adım: Bir şehir seçildiğinde o şehrin bölgelerini çek (GÜNCELLENDİ)
   useEffect(() => {
     if (selectedCountry && selectedCity) {
       setRegions([]);
       setSelectedRegionId('');
       setLoading(prev => ({ ...prev, regions: true }));
-      // API İSTEĞİ GÜNCELLENDİ
       axios.get(`/api/diyanet/locations?country=${selectedCountry}&city=${selectedCity}`)
         .then(response => {
-          console.log("Bölgeler API Yanıtı:", response.data); // LOG EKLENDİ
-          setRegions(response.data);
+          console.log("Bölgeler API Yanıtı:", response.data);
+          
+          // --- DEĞİŞİKLİK BURADA ---
+          const processedRegions = response.data.map(region => {
+            // Önce bölge adını belirle (null ise şehir adını kullan)
+            const regionName = region.region || selectedCity;
+            
+            // Eğer bölge adı şehir adıyla aynıysa, sonuna "MERKEZ" ekle
+            const displayName = regionName === selectedCity ? `${regionName} MERKEZ` : regionName;
+
+            return {
+              ...region,
+              region: displayName
+            };
+          });
+          // --- DEĞİŞİKLİK SONU ---
+
+          setRegions(processedRegions); // İşlenmiş veriyi state'e kaydet
         })
-        .catch(error => console.error("Bölgeler yüklenirken hata oluştu:", error)) // LOG EKLENDİ
+        .catch(error => console.error("Bölgeler yüklenirken hata oluştu:", error))
         .finally(() => setLoading(prev => ({ ...prev, regions: false })));
     }
   }, [selectedCountry, selectedCity]);
@@ -84,7 +94,7 @@ const LocationSelector = ({ onLocationSelect }) => {
                   id: regionId,
                   country: selectedCountry,
                   city: selectedCity,
-                  region: selectedRegionObject.region
+                  region: selectedRegionObject.region // Bu değer artık "SİVAS MERKEZ" gibi olacak
               });
           }
       } else {
@@ -114,6 +124,7 @@ const LocationSelector = ({ onLocationSelect }) => {
       {/* Bölge Seçim Kutusu */}
       <select onChange={handleRegionChange} value={selectedRegionId} disabled={!selectedCity || loading.regions}>
         <option value="">{loading.regions ? 'Yükleniyor...' : 'Bölge Seçiniz'}</option>
+        {/* Bu bölüm artık "SİVAS MERKEZ" gibi gösterecek */}
         {regions.map(region => (
           <option key={region.id} value={region.id}>{region.region}</option>
         ))}

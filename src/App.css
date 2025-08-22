@@ -111,6 +111,67 @@ main {
     color: var(--text-light);
 }
 
+/* --- YENI: Konum Seçimi Yapılmamış Durumu İçin Düzen --- */
+.no-location-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* --- YENI: Konum Seçimi Yapılmamış Durumu İçin Stil --- */
+.no-location-container {
+    background-color: var(--card-bg-dark);
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-dark);
+    color: var(--text-dark);
+    box-sizing: border-box;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.light-theme .no-location-container {
+    background-color: var(--card-bg-light);
+    box-shadow: var(--shadow-light);
+    color: var(--text-light);
+}
+
+.location-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.location-prompt .location-icon {
+    font-size: 3rem;
+    color: #00b4d8;
+    margin-bottom: 10px;
+}
+
+.location-prompt h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #00b4d8;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.location-prompt p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
+}
+
 /* --- Sağ Panel Konteyneri --- */
 .right-panels {
     flex: 1.2; /* Oranı artırdım */
@@ -125,7 +186,6 @@ main {
     background-color: var(--card-bg-dark);
     padding: 20px;
     padding-top: 0px;     /* üst boşluk */
-
     border-radius: 20px;
     box-shadow: var(--shadow-dark);
     color: var(--text-dark);
@@ -136,6 +196,12 @@ main {
     overflow-y: auto; /* Dikey kaydırma çubuğu */
     display: flex;
     flex-direction: column;
+}
+
+/* Konum seçimi yapılmadığında hadis konteynerinin genişliği */
+.no-location-layout .hadis-container {
+    width: 100%;
+    margin: 0;
 }
 
 .light-theme .hadis-container {
@@ -209,11 +275,7 @@ main {
   margin: 40px auto;
   font-size: 1.2rem;
 }
-.info-message {
-  margin-top: 40px;
-  font-size: 1.2rem;
-  opacity: 0.7;
-}
+
 
 /* --- Prayer Dashboard --- */
 .location-display {
@@ -395,7 +457,13 @@ main {
     gap: 15px;
   }
   
-  .prayer-dashboard {
+  .no-location-layout {
+    gap: 15px;
+    max-width: 100%;
+  }
+  
+  .prayer-dashboard,
+  .no-location-container {
     flex: none;
     width: 100%;
     margin: 0;
@@ -445,7 +513,12 @@ main {
     gap: 15px;
   }
   
-  .prayer-dashboard {
+  .no-location-layout {
+    gap: 15px;
+  }
+  
+  .prayer-dashboard,
+  .no-location-container {
     padding: 20px;
   }
   
@@ -465,6 +538,14 @@ main {
   
   .prayer-time-card-single p {
     font-size: 1.5rem;
+  }
+
+  .location-prompt h2 {
+    font-size: 1.5rem;
+  }
+  
+  .location-prompt p {
+    font-size: 1rem;
   }
 }
 
@@ -509,7 +590,8 @@ main {
     font-size: 1.8rem;
   }
   
-  .prayer-dashboard {
+  .prayer-dashboard,
+  .no-location-container {
     padding: 18px;
   }
   
@@ -526,5 +608,17 @@ main {
   .button {
     padding: 8px 18px;
     font-size: 0.85em;
+  }
+
+  .location-prompt h2 {
+    font-size: 1.3rem;
+  }
+  
+  .location-prompt p {
+    font-size: 0.95rem;
+  }
+
+  .location-prompt .location-icon {
+    font-size: 2.5rem;
   }
 }
