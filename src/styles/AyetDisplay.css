@@ -1,0 +1,264 @@
+/* --- Ayet Paneli --- */
+.ayet-container {
+    background-color: var(--card-bg-dark);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-dark);
+    color: var(--text-dark);
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    height: 350px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.no-location-layout .ayet-container {
+    width: 100%;
+    margin: 0 0 20px 0;
+}
+
+.light-theme .ayet-container {
+    background-color: var(--card-bg-light);
+    box-shadow: var(--shadow-light);
+    color: var(--text-light);
+}
+
+/* --- Ayet Paneli İçeriği --- */
+.ayet-container h2 {
+    color: var(--accent-color-dark);
+    margin-bottom: 15px;
+    flex-shrink: 0;
+}
+
+.light-theme .ayet-container h2 {
+    color: var(--accent-color-light);
+}
+
+.ayet-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    font-style: italic;
+    margin: 0 0 15px 0;
+}
+
+.kaynak {
+    font-weight: bold;
+    font-size: 0.9em;
+    opacity: 0.8;
+    color: var(--primary-color-dark);
+    margin-bottom: 15px;
+}
+
+.light-theme .kaynak {
+    color: var(--primary-color-light);
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.button {
+    padding: 10px 15px;
+    font-size: 0.85em;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+.refresh-button {
+    background-color: var(--primary-color-dark);
+    color: white;
+    padding: 10px 20px;
+}
+
+.light-theme .refresh-button {
+    background-color: var(--primary-color-light);
+}
+
+.refresh-button:hover:not(:disabled) {
+    background-color: #0077b6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-button {
+    background-color: var(--primary-color-dark);
+    color: white;
+    font-size: 0.8em;
+    padding: 8px 12px;
+}
+
+.light-theme .nav-button {
+    background-color: var(--primary-color-light);
+}
+
+.nav-button:hover:not(:disabled) {
+    background-color: #0077b6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Disabled buton stilleri */
+.nav-button.disabled,
+.nav-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .nav-button.disabled,
+.light-theme .nav-button:disabled {
+    background-color: #adb5bd;
+    color: #6c757d;
+}
+
+.nav-button.disabled:hover,
+.nav-button:disabled:hover {
+    background-color: #6c757d;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .nav-button.disabled:hover,
+.light-theme .nav-button:disabled:hover {
+    background-color: #adb5bd;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin: 20px 0;
+}
+
+/* Loading spinner specific for ayet container */
+.ayet-container .loading-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #00b4d8;
+    animation: spin 1s ease infinite;
+    margin: 40px auto;
+}
+
+.light-theme .ayet-container .loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--primary-color-light);
+}
+
+/* --- Mobil Uyum (Responsive) --- */
+@media (max-width: 900px) {
+  .ayet-container {
+    width: 100%;
+    height: 300px;
+    padding: 20px;
+    margin: 0 0 20px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .ayet-container {
+    height: 280px;
+    padding: 18px;
+  }
+  
+  .button-group {
+    gap: 8px;
+  }
+  
+  .button {
+    padding: 8px 12px;
+    font-size: 0.8em;
+    min-width: 70px;
+  }
+  
+  .refresh-button {
+    padding: 8px 16px;
+  }
+  
+  .nav-button {
+    padding: 6px 10px;
+    font-size: 0.75em;
+  }
+}
+
+@media (max-width: 480px) {
+  .ayet-container {
+    padding: 15px;
+    height: 280px;
+  }
+  
+  .ayet-text {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .button-group {
+    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .nav-buttons-row {
+    display: flex;
+    gap: 6px;
+    justify-content: space-between;
+  }
+  
+  .button {
+    padding: 8px 12px;
+    font-size: 0.75em;
+    flex: 1;
+    min-width: auto;
+  }
+  
+  .refresh-button {
+    padding: 10px 16px;
+    font-size: 0.8em;
+    margin-bottom: 8px;
+  }
+  
+  .nav-button {
+    padding: 8px 10px;
+    font-size: 0.7em;
+  }
+}
+
+/* Çok küçük ekranlar için özel düzenleme */
+@media (max-width: 350px) {
+  .button-group {
+    gap: 5px;
+  }
+  
+  .button {
+    padding: 6px 10px;
+    font-size: 0.7em;
+  }
+  
+  .refresh-button {
+    padding: 8px 14px;
+    font-size: 0.75em;
+  }
+  
+  .nav-button {
+    padding: 6px 8px;
+    font-size: 0.65em;
+  }
+}

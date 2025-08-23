@@ -1,0 +1,248 @@
+/* --- Sol Panel (Namaz Vakitleri) --- */
+.prayer-dashboard {
+    background-color: var(--card-bg-dark);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-dark);
+    color: var(--text-dark);
+    flex: 1.8; /* Oranı azalttım */
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.light-theme .prayer-dashboard {
+    background-color: var(--card-bg-light);
+    box-shadow: var(--shadow-light);
+    color: var(--text-light);
+}
+
+.location-display {
+  margin-bottom: 5px;
+}
+.location-display h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+.location-display h2 i {
+  margin-right: 10px;
+  color: #00b4d8;
+}
+.location-display p {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.date-display {
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+.date-display i {
+  margin-right: 8px;
+}
+
+.time-panel {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 2.5rem;
+}
+.light-theme .time-panel {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.current-time {
+  font-size: 4rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+}
+.countdown-timer span {
+  font-size: 1rem;
+  color: #00b4d8; /* Vurgu rengi */
+  font-weight: 600;
+}
+.countdown-timer p {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 5px 0 0 0;
+}
+
+/* --- Tek Günlük Vakit Kartları Grid --- */
+.prayer-times-grid-single {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+}
+.prayer-time-card-single {
+  padding: 20px 10px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+.light-theme .prayer-time-card-single {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.prayer-time-card-single h3 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+.prayer-time-card-single h3 i {
+  margin-right: 5px;
+}
+.prayer-time-card-single p {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+/* Sıradaki vakti vurgulama */
+.prayer-time-card-single.highlighted {
+  background-color: #0077b6;
+  border-color: #00b4d8;
+  transform: translateY(-5px);
+  color: #fff;
+}
+.light-theme .prayer-time-card-single.highlighted {
+  background-color: var(--primary-color-light);
+  border-color: #4c956c;
+}
+
+/* --- Konum Seçimi Yapılmamış Durumu İçin Düzen --- */
+.no-location-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.no-location-container {
+    background-color: var(--card-bg-dark);
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-dark);
+    color: var(--text-dark);
+    box-sizing: border-box;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.light-theme .no-location-container {
+    background-color: var(--card-bg-light);
+    box-shadow: var(--shadow-light);
+    color: var(--text-light);
+}
+
+.location-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.location-prompt .location-icon {
+    font-size: 3rem;
+    color: #00b4d8;
+    margin-bottom: 10px;
+}
+.location-prompt h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #00b4d8;
+    margin: 0;
+    line-height: 1.2;
+}
+.location-prompt p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* --- Mobil Uyum (Responsive) --- */
+@media (max-width: 900px) {
+  .prayer-dashboard,
+  .no-location-container {
+    flex: none;
+    width: 100%;
+    margin: 0;
+    padding: 25px;
+  }
+  .prayer-times-grid-single {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .prayer-time-card-single {
+    padding: 15px 8px;
+  }
+  .prayer-time-card-single p {
+    font-size: 1.4rem;
+  }
+}
+@media (max-width: 768px) {
+  .prayer-dashboard,
+  .no-location-container {
+    padding: 20px;
+  }
+  .prayer-times-grid-single {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .prayer-time-card-single {
+    padding: 18px 10px;
+  }
+  .prayer-time-card-single p {
+    font-size: 1.5rem;
+  }
+  .location-prompt h2 {
+    font-size: 1.5rem;
+  }
+  .location-prompt p {
+    font-size: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  .prayer-times-grid-single {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .prayer-time-card-single {
+    padding: 12px 8px;
+  }
+  .prayer-time-card-single h3 {
+    font-size: 0.9rem;
+  }
+  .prayer-time-card-single p {
+    font-size: 1.3rem;
+  }
+  .current-time {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+  }
+  .countdown-timer p {
+    font-size: 1.3rem;
+  }
+  .location-display h2 {
+    font-size: 1.8rem;
+  }
+  .prayer-dashboard,
+  .no-location-container {
+    padding: 18px;
+  }
+  .location-prompt h2 {
+    font-size: 1.3rem;
+  }
+  .location-prompt p {
+    font-size: 0.95rem;
+  }
+  .location-prompt .location-icon {
+    font-size: 2.5rem;
+  }
+}

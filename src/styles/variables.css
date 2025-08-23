@@ -1,0 +1,27 @@
+/* --- Renk Paleti ve Tema Değişkenleri --- */
+:root {
+  --bg-light: #f0f4f8;
+  --card-bg-light: #ffffff;
+  --text-light: #102a43;
+  --primary-color-light: #2c6e49; /* Yeşil */
+  --accent-color-light: #ffc107; /* Altın Sarısı */
+  --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+  --bg-dark: #0d1b2a; /* Daha koyu bir arka plan */
+  --card-bg-dark: #1b263b;
+  --text-dark: #e0e1dd;
+  --primary-color-dark: #4c956c; /* Yeşil */
+  --accent-color-dark: #ffc107; /* Altın Sarısı */
+  --shadow-dark: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Tema Sınıfları --- */
+.light-theme {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+.dark-theme {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}

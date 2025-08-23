@@ -3,8 +3,18 @@ import axios from 'axios';
 import LocationSelector from './components/LocationSelector';
 import PrayerDashboard from './components/PrayerDashboard';
 import HadisDisplay from './components/HadisDisplay';
+import AyetDisplay from './components/AyetDisplay';
 import LoadingSpinner from './components/LoadingSpinner';
-import './App.css';
+
+// Yeni ve güncellenmiş import satırları
+import './styles/variables.css';
+import './styles/base.css';
+import './styles/Header.css';
+import './styles/LocationSelector.css';
+import './styles/PrayerDashboard.css';
+import './styles/HadisDisplay.css';
+import './styles/AyetDisplay.css';
+import './styles/LoadingSpinner.css';
 
 function App() {
   const [locationInfo, setLocationInfo] = useState(null);
@@ -98,7 +108,7 @@ function App() {
       <header className="app-header">
         <h1 className="logo">Namaz Vakitleri</h1>
         <button onClick={toggleTheme} className="theme-toggle">
-          {theme === 'light' ? '☀️👉🌑' : '🌑👉☀️'}
+          {theme === 'light' ? '☀️👉🌙' : '🌙👉☀️'}
         </button>
       </header>
 
@@ -122,6 +132,7 @@ function App() {
               error={error} 
               timeZone={timeZone}
             />
+            <AyetDisplay />
             <HadisDisplay />
           </div>
         ) : (
@@ -134,6 +145,7 @@ function App() {
               timeZone={timeZone}
             />
             <div className="right-panels">
+              <AyetDisplay />
               <HadisDisplay />
             </div>
           </div>

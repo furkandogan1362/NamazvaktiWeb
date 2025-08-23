@@ -1,0 +1,50 @@
+/* --- Konum Seçici --- */
+.location-selector {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.location-selector select {
+  padding: 12px 18px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  border-radius: 8px;
+  border: 1px solid #3e5a7b;
+  background-color: var(--card-bg-dark);
+  color: var(--text-dark);
+  min-width: 200px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.light-theme .location-selector select {
+  background-color: var(--card-bg-light);
+  color: var(--text-light);
+  border-color: #ccc;
+}
+
+.location-selector select:focus {
+  outline: none;
+  border-color: var(--primary-color-dark);
+  box-shadow: 0 0 0 3px rgba(76, 149, 108, 0.3);
+}
+
+.light-theme .location-selector select:focus {
+  border-color: var(--primary-color-light);
+  box-shadow: 0 0 0 3px rgba(44, 110, 73, 0.2);
+}
+
+/* --- Mobil Uyum (Responsive) --- */
+@media (max-width: 768px) {
+  .location-selector {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .location-selector select {
+    width: 95%;
+    max-width: 350px;
+  }
+}

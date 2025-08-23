@@ -1,0 +1,135 @@
+/* --- Sağ Panel Konteyneri --- */
+.right-panels {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+/* --- Hadis Paneli --- */
+.hadis-container {
+    background-color: var(--card-bg-dark);
+    padding: 20px;
+    padding-top: 0px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-dark);
+    color: var(--text-dark);
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    height: 350px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.no-location-layout .hadis-container {
+    width: 100%;
+    margin: 0;
+}
+.light-theme .hadis-container {
+    background-color: var(--card-bg-light);
+    box-shadow: var(--shadow-light);
+    color: var(--text-light);
+}
+
+/* --- Hadis Paneli İçeriği --- */
+.hadis-container h2 {
+    color: var(--accent-color-dark);
+    margin-bottom: 15px;
+    flex-shrink: 0;
+}
+.light-theme .hadis-container h2 {
+    color: var(--accent-color-light);
+}
+
+.hadis-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.hadis-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    font-style: italic;
+    margin: 0 0 15px 0;
+}
+
+.kaynak {
+    font-weight: bold;
+    font-size: 0.9em;
+    opacity: 0.8;
+    color: var(--primary-color-dark);
+    margin-bottom: 15px;
+}
+.light-theme .kaynak {
+    color: var(--primary-color-light);
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    flex-shrink: 0;
+}
+
+.button {
+    padding: 10px 20px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+}
+
+.refresh-button {
+    background-color: var(--primary-color-dark);
+    color: white;
+}
+.light-theme .refresh-button {
+    background-color: var(--primary-color-light);
+}
+.refresh-button:hover {
+    background-color: #0077b6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Mobil Uyum (Responsive) --- */
+@media (max-width: 900px) {
+  .right-panels {
+    flex: none;
+    width: 100%;
+    margin: 0;
+  }
+  .hadis-container {
+    width: 100%;
+    height: 300px;
+    padding: 20px;
+    margin: 0;
+  }
+}
+@media (max-width: 768px) {
+  .hadis-container {
+    height: 280px;
+    padding: 18px;
+  }
+}
+@media (max-width: 480px) {
+  .hadis-container {
+    padding: 15px;
+    height: 250px;
+  }
+  .hadis-text {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .button {
+    padding: 8px 18px;
+    font-size: 0.85em;
+  }
+}

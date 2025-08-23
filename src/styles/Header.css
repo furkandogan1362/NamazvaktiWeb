@@ -1,0 +1,43 @@
+/* --- Yeni Üst Başlık (Header) --- */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1200px;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #00b4d8; /* Canlı bir mavi */
+}
+
+.theme-toggle {
+    font-size: 1.5rem;
+    padding: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: transform 0.2s ease;
+}
+
+.light-theme .theme-toggle {
+    color: var(--text-light);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.2);
+}
+
+/* --- Mobil Uyum (Responsive) --- */
+@media (max-width: 480px) {
+  .app-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 20px;
+  }
+}
