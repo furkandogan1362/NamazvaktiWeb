@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment-timezone'; 
+import 'moment/locale/tr'; // YENİ: Türkçe dil desteğini içeri aktarın
 
 const padZero = (num) => num.toString().padStart(2, '0');
 
-const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
-    const [currentTime, setCurrentTime] = useState(new Date());
+const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone }) => {
+    // Türkçe dil ayarını yapın
+    moment.locale('tr'); // YENİ: Moment'i Türkçe diline ayarlayın
+
+    const [currentTime, setCurrentTime] = useState(moment().tz(timeZone || 'Europe/Istanbul'));
     const [todayPrayers, setTodayPrayers] = useState(null);
     const [nextPrayer, setNextPrayer] = useState({ name: '', time: null });
     const [countdown, setCountdown] = useState('');
@@ -18,17 +23,18 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
         "Yatsı": "fas fa-moon"
     };
 
+    // Saat dilimine göre saati güncelle
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentTime(new Date());
+            setCurrentTime(moment().tz(timeZone || 'Europe/Istanbul'));
         }, 1000);
         return () => clearInterval(timer);
-    }, []);
+    }, [timeZone]);
 
     useEffect(() => {
         if (prayerData && prayerData.length > 0) {
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
+            const now = moment().tz(timeZone || 'Europe/Istanbul');
+            const todayStr = now.format('YYYY-MM-DD');
             const foundToday = prayerData.find(day => day.date.startsWith(todayStr));
             setTodayPrayers(foundToday);
 
@@ -44,43 +50,41 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
 
                 let nextPrayerFound = false;
                 for (const [name, timeStr] of Object.entries(prayerTimes)) {
-                    const [hours, minutes] = timeStr.split(':').map(Number);
-                    const prayerDateTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-                    if (prayerDateTime > now) {
+                    const prayerDateTime = moment.tz(`${todayStr}T${timeStr}`, timeZone || 'Europe/Istanbul');
+                    if (prayerDateTime.isAfter(now)) {
                         setNextPrayer({ name, time: prayerDateTime });
                         nextPrayerFound = true;
                         break;
                     }
                 }
-                
+
                 if (!nextPrayerFound) {
-                    const tomorrowStr = new Date(now.setDate(now.getDate() + 1)).toISOString().split('T')[0];
+                    const tomorrow = now.clone().add(1, 'day');
+                    const tomorrowStr = tomorrow.format('YYYY-MM-DD');
                     const tomorrowPrayers = prayerData.find(day => day.date.startsWith(tomorrowStr));
                     if (tomorrowPrayers) {
-                        const [hours, minutes] = tomorrowPrayers.fajr.split(':').map(Number);
-                        const nextFajrTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+                        const nextFajrTime = moment.tz(`${tomorrowStr}T${tomorrowPrayers.fajr}`, timeZone || 'Europe/Istanbul');
                         setNextPrayer({ name: "İmsak", time: nextFajrTime });
                     }
                 }
             }
         }
-    }, [prayerData, currentTime]);
+    }, [prayerData, currentTime, timeZone]);
 
     useEffect(() => {
         if (nextPrayer.time) {
-            const totalSeconds = Math.floor((nextPrayer.time - currentTime) / 1000);
-            if (totalSeconds >= 0) {
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
+            const diffSeconds = nextPrayer.time.diff(currentTime, 'seconds');
+            if (diffSeconds >= 0) {
+                const hours = Math.floor(diffSeconds / 3600);
+                const minutes = Math.floor((diffSeconds % 3600) / 60);
+                const seconds = diffSeconds % 60;
                 setCountdown(`${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`);
             }
         }
     }, [currentTime, nextPrayer]);
 
     if (error) return <p className="error-message">Vakitler yüklenemedi: {error}</p>;
-    
-    // Konum seçimi yapılmamışsa özel bir görüntü göster (loading kontrolü kaldırıldı)
+
     if (!locationInfo) {
         return (
             <div className="no-location-container">
@@ -89,21 +93,19 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
                         <i className="fas fa-map-marker-alt"></i>
                     </div>
                     <h2>Lütfen konum seçimi yapınız</h2>
-                    <p>Namaz vakitlerini görüntülemek<br/>için yukarıdaki menüden ülke,<br/>şehir ve bölge seçimi yapınız.</p>
+                    <p>Namaz vakitlerini görüntülemek<br />için yukarıdaki menüden ülke,<br />şehir ve bölge seçimi yapınız.</p>
                 </div>
             </div>
         );
     }
-    
-    if (!todayPrayers) return 
+
+    if (!todayPrayers) return null;
 
     const prayerNames = ["İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı"];
     const prayerTimes = [todayPrayers.fajr, todayPrayers.sun, todayPrayers.dhuhr, todayPrayers.asr, todayPrayers.maghrib, todayPrayers.isha];
 
     const formatDate = (date) => {
-        return date.toLocaleDateString('tr-TR', {
-            day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'
-        });
+        return date.format('LLLL');
     };
 
     return (
@@ -115,10 +117,10 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
             <div className="date-display">
                 <p><i className="fas fa-calendar-alt"></i> {formatDate(currentTime)}</p>
             </div>
-            
+
             <div className="time-panel">
                 <div className="current-time">
-                    {currentTime.toLocaleTimeString('tr-TR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    {currentTime.format('HH:mm:ss')}
                 </div>
                 <div className="countdown-timer">
                     {nextPrayer.name && (
@@ -133,7 +135,6 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error }) => {
             <div className="prayer-times-grid-single">
                 {prayerNames.map((name, index) => (
                     <div key={name} className={`prayer-time-card-single ${nextPrayer.name === name ? 'highlighted' : ''}`}>
-                        {/* İkonlar artık dinamik olarak geliyor */}
                         <h3><i className={prayerIcons[name]}></i> {name}</h3>
                         <p>{prayerTimes[index]}</p>
                     </div>
