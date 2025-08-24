@@ -4,7 +4,8 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: 100%;
+    height: 100%; /* YENİ: Yüksekliği %100 yapıldı */
+    justify-content: space-between; /* YENİ: İçerikleri dikeyde hizala */
 }
 
 /* --- Hadis Paneli --- */
@@ -25,7 +26,7 @@
 }
 .no-location-layout .hadis-container {
     width: 100%;
-    margin: 0;
+    margin: 0 0 20px 0; /* YENİ: No-location durumunda da alt boşluk */
 }
 .light-theme .hadis-container {
     background-color: var(--card-bg-light);
@@ -110,19 +111,21 @@
     width: 100%;
     height: 300px;
     padding: 20px;
-    margin: 0;
+    margin: 0 0 20px 0; /* Mobilde de alt boşluğu koru */
   }
 }
 @media (max-width: 768px) {
   .hadis-container {
     height: 280px;
     padding: 18px;
+    margin-bottom: 20px; /* Alt boşluğu koru */
   }
 }
 @media (max-width: 480px) {
   .hadis-container {
     padding: 15px;
     height: 250px;
+    margin-bottom: 20px; /* Alt boşluğu koru */
   }
   .hadis-text {
     font-size: 1rem;

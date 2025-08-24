@@ -13,6 +13,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    margin-top: 60px;
 }
 
 .no-location-layout .ayet-container {
@@ -181,20 +182,26 @@
   
   .button-group {
     gap: 8px;
+    justify-content: space-between;
   }
   
   .button {
-    padding: 8px 12px;
+    flex: 1;
+    padding: 10px 8px;
     font-size: 0.8em;
-    min-width: 70px;
+    min-width: 0;
+    max-width: none;
   }
   
   .refresh-button {
-    padding: 8px 16px;
+    flex: 1.2;
+    padding: 10px 8px;
+    font-size: 0.8em;
   }
   
   .nav-button {
-    padding: 6px 10px;
+    flex: 1;
+    padding: 10px 8px;
     font-size: 0.75em;
   }
 }
@@ -212,31 +219,27 @@
   
   .button-group {
     gap: 6px;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .nav-buttons-row {
-    display: flex;
-    gap: 6px;
+    width: 100%;
     justify-content: space-between;
   }
   
   .button {
-    padding: 8px 12px;
-    font-size: 0.75em;
     flex: 1;
-    min-width: auto;
+    padding: 12px 4px;
+    font-size: 0.75em;
+    min-width: 0;
+    border-radius: 20px;
   }
   
   .refresh-button {
-    padding: 10px 16px;
-    font-size: 0.8em;
-    margin-bottom: 8px;
+    flex: 1;
+    padding: 12px 4px;
+    font-size: 0.75em;
   }
   
   .nav-button {
-    padding: 8px 10px;
+    flex: 1;
+    padding: 12px 4px;
     font-size: 0.7em;
   }
 }
@@ -244,21 +247,25 @@
 /* Çok küçük ekranlar için özel düzenleme */
 @media (max-width: 350px) {
   .button-group {
-    gap: 5px;
+    gap: 4px;
   }
   
   .button {
-    padding: 6px 10px;
+    flex: 1;
+    padding: 10px 2px;
     font-size: 0.7em;
+    border-radius: 15px;
   }
   
   .refresh-button {
-    padding: 8px 14px;
-    font-size: 0.75em;
+    flex: 1;
+    padding: 10px 2px;
+    font-size: 0.7em;
   }
   
   .nav-button {
-    padding: 6px 8px;
+    flex: 1;
+    padding: 10px 2px;
     font-size: 0.65em;
   }
 }

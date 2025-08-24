@@ -23,7 +23,7 @@ const AyetDisplay = () => {
       71: "Nuh", 72: "Cin", 73: "Müzzemmil", 74: "Müddessir", 75: "Kıyame", 76: "İnsan", 77: "Mürselat", 78: "Nebe", 79: "Naziat", 80: "Abese",
       81: "Tekvir", 82: "İnfitar", 83: "Mutaffifin", 84: "İnşikak", 85: "Buruc", 86: "Tarık", 87: "Ala", 88: "Gaşiye", 89: "Fecr", 90: "Beled",
       91: "Şems", 92: "Leyl", 93: "Duha", 94: "İnşirah", 95: "Tin", 96: "Alak", 97: "Kadir", 98: "Beyyine", 99: "Zilzal", 100: "Adiyat",
-      101: "Karia", 102: "Tekaşür", 103: "Asr", 104: "Hümeze", 105: "Fil", 106: "Kureyş", 107: "Maun", 108: "Kevser", 109: "Kafirun", 110: "Nasr",
+      101: "Karia", 102: "Tekasür", 103: "Asr", 104: "Hümeze", 105: "Fil", 106: "Kureyş", 107: "Maun", 108: "Kevser", 109: "Kafirun", 110: "Nasr",
       111: "Tebbet", 112: "İhlas", 113: "Felak", 114: "Nas"
     };
     return sureIsimleri[sureNumarasi] || `${sureNumarasi}. Sure`;
@@ -57,7 +57,7 @@ const AyetDisplay = () => {
     setError(null);
     
     try {
-      const ayetResponse = await axios.get(`https://api.alquran.cloud/v1/ayah/${sureNo}:${ayetNo}/tr.diyanet`);
+      const ayetResponse = await axios.get(`https://api.alquran.cloud/v1/ayah/${sureNo}:${ayetNo}/tr.vakfi`);
       const ayetData = ayetResponse.data.data;
       
       setAyet({

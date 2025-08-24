@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment-timezone'; 
-import 'moment/locale/tr'; // YENİ: Türkçe dil desteğini içeri aktarın
+import 'moment/locale/tr';
 
 const padZero = (num) => num.toString().padStart(2, '0');
 
 const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone }) => {
-    // Türkçe dil ayarını yapın
-    moment.locale('tr'); // YENİ: Moment'i Türkçe diline ayarlayın
+    moment.locale('tr');
 
     const [currentTime, setCurrentTime] = useState(moment().tz(timeZone || 'Europe/Istanbul'));
     const [todayPrayers, setTodayPrayers] = useState(null);
     const [nextPrayer, setNextPrayer] = useState({ name: '', time: null });
     const [countdown, setCountdown] = useState('');
 
-    // Her vakit için farklı ikonları tanımlayan nesne
     const prayerIcons = {
         "İmsak": "fas fa-moon",
         "Güneş": "fas fa-sun",
@@ -23,7 +21,7 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
         "Yatsı": "fas fa-moon"
     };
 
-    // Saat dilimine göre saati güncelle
+    // Current time güncellemesi - timeZone değiştiğinde de güncelle
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(moment().tz(timeZone || 'Europe/Istanbul'));
@@ -31,14 +29,21 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
         return () => clearInterval(timer);
     }, [timeZone]);
 
+    // Prayer data değiştiğinde hesaplamaları sıfırla ve yeniden yap
     useEffect(() => {
-        if (prayerData && prayerData.length > 0) {
-            const now = moment().tz(timeZone || 'Europe/Istanbul');
+        // Prayer data veya timeZone değiştiğinde state'leri sıfırla
+        setTodayPrayers(null);
+        setNextPrayer({ name: '', time: null });
+        setCountdown('');
+
+        if (prayerData && prayerData.length > 0 && timeZone) {
+            const now = moment().tz(timeZone);
             const todayStr = now.format('YYYY-MM-DD');
             const foundToday = prayerData.find(day => day.date.startsWith(todayStr));
-            setTodayPrayers(foundToday);
-
+            
             if (foundToday) {
+                setTodayPrayers(foundToday);
+
                 const prayerTimes = {
                     "İmsak": foundToday.fajr,
                     "Güneş": foundToday.sun,
@@ -48,9 +53,10 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
                     "Yatsı": foundToday.isha
                 };
 
+                // Bir sonraki namaz vaktini bul
                 let nextPrayerFound = false;
                 for (const [name, timeStr] of Object.entries(prayerTimes)) {
-                    const prayerDateTime = moment.tz(`${todayStr}T${timeStr}`, timeZone || 'Europe/Istanbul');
+                    const prayerDateTime = moment.tz(`${todayStr}T${timeStr}`, timeZone);
                     if (prayerDateTime.isAfter(now)) {
                         setNextPrayer({ name, time: prayerDateTime });
                         nextPrayerFound = true;
@@ -58,32 +64,40 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
                     }
                 }
 
+                // Bugünün tüm namaz vakitleri geçtiyse yarının imsak vaktini al
                 if (!nextPrayerFound) {
                     const tomorrow = now.clone().add(1, 'day');
                     const tomorrowStr = tomorrow.format('YYYY-MM-DD');
                     const tomorrowPrayers = prayerData.find(day => day.date.startsWith(tomorrowStr));
                     if (tomorrowPrayers) {
-                        const nextFajrTime = moment.tz(`${tomorrowStr}T${tomorrowPrayers.fajr}`, timeZone || 'Europe/Istanbul');
+                        const nextFajrTime = moment.tz(`${tomorrowStr}T${tomorrowPrayers.fajr}`, timeZone);
+                        setNextPrayer({ name: "İmsak", time: nextFajrTime });
+                    } else {
+                        // Yarının verisi yoksa bugünün imsak vaktini yarına taşı
+                        const nextFajrTime = moment.tz(`${todayStr}T${foundToday.fajr}`, timeZone).add(1, 'day');
                         setNextPrayer({ name: "İmsak", time: nextFajrTime });
                     }
                 }
             }
         }
-    }, [prayerData, currentTime, timeZone]);
+    }, [prayerData, timeZone]); // currentTime'ı dependency'den çıkardık
 
+    // Geri sayım hesaplaması
     useEffect(() => {
-        if (nextPrayer.time) {
+        if (nextPrayer.time && currentTime) {
             const diffSeconds = nextPrayer.time.diff(currentTime, 'seconds');
             if (diffSeconds >= 0) {
                 const hours = Math.floor(diffSeconds / 3600);
                 const minutes = Math.floor((diffSeconds % 3600) / 60);
                 const seconds = diffSeconds % 60;
                 setCountdown(`${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`);
+            } else {
+                setCountdown('');
             }
+        } else {
+            setCountdown('');
         }
-    }, [currentTime, nextPrayer]);
-
-    if (error) return <p className="error-message">Vakitler yüklenemedi: {error}</p>;
+    }, [currentTime, nextPrayer.time]);
 
     if (!locationInfo) {
         return (
@@ -123,7 +137,7 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
                     {currentTime.format('HH:mm:ss')}
                 </div>
                 <div className="countdown-timer">
-                    {nextPrayer.name && (
+                    {nextPrayer.name && nextPrayer.time && countdown && (
                         <>
                             <span>{nextPrayer.name} vaktine kalan süre:</span>
                             <p>{countdown}</p>

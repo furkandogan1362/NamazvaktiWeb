@@ -5,9 +5,10 @@
     border-radius: 20px;
     box-shadow: var(--shadow-dark);
     color: var(--text-dark);
-    flex: 1.8; /* Oranı azalttım */
+    flex: 1.8;
     box-sizing: border-box;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
 }
 
 .light-theme .prayer-dashboard {
@@ -59,7 +60,7 @@
 }
 .countdown-timer span {
   font-size: 1rem;
-  color: #00b4d8; /* Vurgu rengi */
+  color: #00b4d8;
   font-weight: 600;
 }
 .countdown-timer p {
@@ -75,11 +76,17 @@
   gap: 15px;
 }
 .prayer-time-card-single {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   padding: 20px 10px;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  height: 100px; /* Sabit yükseklik */
 }
 .light-theme .prayer-time-card-single {
   background-color: rgba(0, 0, 0, 0.03);
@@ -89,9 +96,14 @@
   font-size: 1rem;
   font-weight: 400;
   opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 .prayer-time-card-single h3 i {
-  margin-right: 5px;
+  margin-right: 0; /* Sağ margin kaldırıldı */
+  font-size: 1.2rem; /* İkon boyutu biraz büyütüldü */
 }
 .prayer-time-card-single p {
   margin: 0;
@@ -103,36 +115,33 @@
 .prayer-time-card-single.highlighted {
   background-color: #0077b6;
   border-color: #00b4d8;
-  transform: translateY(-5px);
   color: #fff;
+  /* Transform ve diğer position değişiklikleri kaldırıldı */
 }
 .light-theme .prayer-time-card-single.highlighted {
   background-color: var(--primary-color-light);
   border-color: #4c956c;
 }
 
-/* --- Konum Seçimi Yapılmamış Durumu İçin Düzen --- */
-.no-location-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
+/* --- Konum Seçimi Yapılmamış Durumu İçin Düzen (DİĞER KUTULARLA EŞİT BOYUT) --- */
 .no-location-container {
     background-color: var(--card-bg-dark);
-    padding: 40px 30px;
+    padding: 30px;
     border-radius: 20px;
     box-shadow: var(--shadow-dark);
     color: var(--text-dark);
     box-sizing: border-box;
-    text-align: center;
-    min-height: 200px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    width: 100%; /* Tam genişlik */
+    
+    /* Diğer kutularla aynı yükseklik için */
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    text-align: center;
+    height: 350px; /* EKLENDİ */
 }
 .light-theme .no-location-container {
     background-color: var(--card-bg-light);
@@ -145,6 +154,7 @@
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    margin-bottom: 20px;
 }
 .location-prompt .location-icon {
     font-size: 3rem;
@@ -166,14 +176,73 @@
     text-align: center;
 }
 
+/* --- Sağ Panel Konteyneri --- */
+.right-panels {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    margin-bottom: 20px;
+    justify-content: space-between; /* EKLENDİ */
+}
+
+/* --- GPS Butonunun Yeni Konumu İçin CSS --- */
+.gps-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0px 0 20px 0;
+}
+
+/* --- Konum Seçimi Yapılmamış Durumu İçin Düzen --- */
+.no-location-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Uygulama ana düzeni */
+.main-content-panels {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: stretch; /* DÜZELTİLDİ: Panelleri aynı yüksekliğe hizalar */
+}
+
+.left-panel {
+  flex: 1.8;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* EKLENDİ */
+}
+
 /* --- Mobil Uyum (Responsive) --- */
 @media (max-width: 900px) {
+  .left-panel {
+    flex: none;
+    width: 100%;
+  }
   .prayer-dashboard,
   .no-location-container {
     flex: none;
     width: 100%;
-    margin: 0;
-    padding: 25px;
+    margin: 0 0 20px 0;
+  }
+  .right-panels {
+    flex: none;
+    width: 100%;
+    margin: 0 0 20px 0;
+  }
+  .no-location-layout {
+    margin-bottom: 20px;
   }
   .prayer-times-grid-single {
     grid-template-columns: repeat(3, 1fr);
@@ -181,15 +250,34 @@
   }
   .prayer-time-card-single {
     padding: 15px 8px;
+    height: 85px;
   }
   .prayer-time-card-single p {
     font-size: 1.4rem;
   }
+  .location-prompt h2 {
+    font-size: 1.5rem;
+  }
+  .location-prompt p {
+    font-size: 1rem;
+  }
+  .main-content-panels {
+    flex-direction: column;
+    gap: 0;
+  }
 }
+
 @media (max-width: 768px) {
   .prayer-dashboard,
   .no-location-container {
     padding: 20px;
+    margin-bottom: 20px;
+  }
+  .right-panels {
+    margin-bottom: 20px;
+  }
+  .no-location-layout {
+    margin-bottom: 20px;
   }
   .prayer-times-grid-single {
     grid-template-columns: repeat(2, 1fr);
@@ -197,6 +285,7 @@
   }
   .prayer-time-card-single {
     padding: 18px 10px;
+    height: 90px;
   }
   .prayer-time-card-single p {
     font-size: 1.5rem;
@@ -209,12 +298,24 @@
   }
 }
 @media (max-width: 480px) {
+  .prayer-dashboard,
+  .no-location-container {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+  .right-panels {
+    margin-bottom: 20px;
+  }
+  .no-location-layout {
+    margin-bottom: 20px;
+  }
   .prayer-times-grid-single {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   .prayer-time-card-single {
     padding: 12px 8px;
+    height: 80px;
   }
   .prayer-time-card-single h3 {
     font-size: 0.9rem;
@@ -231,10 +332,6 @@
   }
   .location-display h2 {
     font-size: 1.8rem;
-  }
-  .prayer-dashboard,
-  .no-location-container {
-    padding: 18px;
   }
   .location-prompt h2 {
     font-size: 1.3rem;
