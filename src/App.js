@@ -18,6 +18,7 @@ import './styles/PrayerDashboard.css';
 import './styles/HadisDisplay.css';
 import './styles/AyetDisplay.css';
 import './styles/LoadingSpinner.css';
+import './styles/GpsLocationButton.css';
 
 function App() {
   const [locationInfo, setLocationInfo] = useState(null);
@@ -55,6 +56,139 @@ function App() {
       localStorage.removeItem('savedLocation');
     }
   }, []);
+
+  // Cihazın mobil olup olmadığını kontrol et
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
+  // Konum servislerinin mevcut olup olmadığını kontrol et
+  const isLocationServiceAvailable = () => {
+    return 'geolocation' in navigator;
+  };
+
+  // Konum izni durumunu kontrol et (modern tarayıcılar için)
+  const checkLocationPermission = async () => {
+    if ('permissions' in navigator) {
+      try {
+        const permission = await navigator.permissions.query({name: 'geolocation'});
+        return permission.state; // 'granted', 'denied', veya 'prompt'
+      } catch (error) {
+        console.warn("Konum izni durumu kontrol edilemedi:", error);
+        return 'unknown';
+      }
+    }
+    return 'unknown';
+  };
+
+  // Hata mesajları için yardımcı fonksiyon
+  const getLocationErrorMessage = (error) => {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        return "Konum erişim izni reddedildi. Lütfen tarayıcı ayarlarınızdan konum erişimine izin verin.";
+      case error.POSITION_UNAVAILABLE:
+        return "Konum bilgisi mevcut değil. Lütfen GPS'inizin açık olduğundan emin olun.";
+      case error.TIMEOUT:
+        return "Konum alınırken zaman aşımı oluştu. Lütfen tekrar deneyin.";
+      default:
+        return "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin.";
+    }
+  };
+
+  // Mobil cihaz için konum ayarlarını açma rehberi
+  const showLocationSettingsGuide = () => {
+    const userAgent = navigator.userAgent;
+    let message = "Konum servislerinizi açmak için:\n\n";
+    
+    if (/iPhone|iPad/.test(userAgent)) {
+      message += "iOS: Ayarlar → Gizlilik ve Güvenlik → Konum Servisleri → Açık\n";
+      message += "Safari: Ayarlar → Safari → Konum → İzin Ver";
+    } else if (/Android/.test(userAgent)) {
+      message += "Android: Ayarlar → Konum → Açık\n";
+      message += "Chrome: Ayarlar → Site Ayarları → Konum → İzin Ver";
+    } else {
+      message += "Cihazınızın konum ayarlarını kontrol edin ve tarayıcınıza konum erişimi verin.";
+    }
+    
+    alert(message);
+  };
+
+  // Geliştirilmiş GPS konum alma fonksiyonu
+  const handleGpsLocation = async () => {
+    setIsGpsLoading(true);
+    setError(null);
+
+    // Konum servislerinin mevcut olup olmadığını kontrol et
+    if (!isLocationServiceAvailable()) {
+      setError('Cihazınız konum servislerini desteklemiyor.');
+      setIsGpsLoading(false);
+      return;
+    }
+
+    try {
+      // Konum izni durumunu kontrol et
+      const permissionStatus = await checkLocationPermission();
+      
+      if (permissionStatus === 'denied') {
+        const isMobile = isMobileDevice();
+        if (isMobile) {
+          setError('Konum erişim izni reddedildi. Lütfen cihaz ayarlarınızdan konum servislerini açın.');
+          setTimeout(() => {
+            showLocationSettingsGuide();
+          }, 1000);
+        } else {
+          setError('Konum erişim izni reddedildi. Lütfen tarayıcı ayarlarınızdan bu siteye konum erişimi verin.');
+        }
+        setIsGpsLoading(false);
+        return;
+      }
+
+      // Konum alma seçenekleri
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 15000, // 15 saniye timeout
+        maximumAge: 300000 // 5 dakika cache
+      };
+
+      // Konum alma promise'i
+      const getCurrentPosition = () => {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
+      };
+
+      // Konumu almaya çalış
+      const position = await getCurrentPosition();
+      const { latitude, longitude } = position.coords;
+      
+      console.log("Konum başarıyla alındı:", { latitude, longitude });
+      
+      await fetchPrayerData({
+        isGps: true,
+        latitude,
+        longitude
+      });
+
+    } catch (geoError) {
+      console.error("GPS Konum hatası:", geoError);
+      
+      const isMobile = isMobileDevice();
+      let errorMessage = getLocationErrorMessage(geoError);
+      
+      // Mobil cihazlar için özel mesajlar
+      if (isMobile && geoError.code === geoError.PERMISSION_DENIED) {
+        errorMessage = "Konum erişim izni reddedildi. Cihaz ayarlarınızdan konum servislerini açın.";
+        setTimeout(() => {
+          showLocationSettingsGuide();
+        }, 1000);
+      } else if (isMobile && geoError.code === geoError.POSITION_UNAVAILABLE) {
+        errorMessage = "Konum bulunamadı. GPS'inizin açık olduğundan ve açık bir alanda olduğunuzdan emin olun.";
+      }
+      
+      setError(errorMessage);
+      setIsGpsLoading(false);
+    }
+  };
 
   // Namaz vakitlerini ve saat dilimini API'den çekme
   const fetchPrayerData = async (locationDetails) => {
@@ -167,30 +301,6 @@ function App() {
       fetchPrayerData(locationInfo);
     }
   }, [locationInfo]);
-  
-  const handleGpsLocation = () => {
-    setIsGpsLoading(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          fetchPrayerData({
-            isGps: true,
-            latitude,
-            longitude
-          });
-        },
-        (err) => {
-          console.error("GPS Konum hatası:", err);
-          setError('Konumunuz alınamadı. Lütfen tarayıcı ayarlarınızdan izin verin.');
-          setIsGpsLoading(false);
-        }
-      );
-    } else {
-      setError('Cihazınız konum servislerini desteklemiyor.');
-      setIsGpsLoading(false);
-    }
-  };
 
   // Error message component
   const ErrorMessage = () => {

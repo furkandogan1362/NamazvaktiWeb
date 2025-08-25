@@ -224,46 +224,59 @@
   justify-content: space-between; /* EKLENDİ */
 }
 
+/* Sadece değişen kısımları - mevcut PrayerDashboard.css dosyanızın sonundaki responsive kısımlarını bu kodlarla değiştirin */
+
 /* --- Mobil Uyum (Responsive) --- */
 @media (max-width: 900px) {
+  .main-content-panels {
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+  }
+  
   .left-panel {
     flex: none;
     width: 100%;
+    margin-bottom: 20px;
   }
+  
   .prayer-dashboard,
   .no-location-container {
     flex: none;
     width: 100%;
     margin: 0 0 20px 0;
   }
+  
   .right-panels {
     flex: none;
     width: 100%;
-    margin: 0 0 20px 0;
+    margin: 0;
   }
-  .no-location-layout {
-    margin-bottom: 20px;
+  
+  .gps-button-container {
+    margin: 0 0 15px 0;
   }
+  
   .prayer-times-grid-single {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
+  
   .prayer-time-card-single {
     padding: 15px 8px;
     height: 85px;
   }
+  
   .prayer-time-card-single p {
     font-size: 1.4rem;
   }
+  
   .location-prompt h2 {
     font-size: 1.5rem;
   }
+  
   .location-prompt p {
     font-size: 1rem;
-  }
-  .main-content-panels {
-    flex-direction: column;
-    gap: 0;
   }
 }
 
@@ -273,72 +286,89 @@
     padding: 20px;
     margin-bottom: 20px;
   }
+  
   .right-panels {
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
-  .no-location-layout {
-    margin-bottom: 20px;
-  }
+  
   .prayer-times-grid-single {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
+  
   .prayer-time-card-single {
     padding: 18px 10px;
     height: 90px;
   }
+  
   .prayer-time-card-single p {
     font-size: 1.5rem;
   }
+  
   .location-prompt h2 {
     font-size: 1.5rem;
   }
+  
   .location-prompt p {
     font-size: 1rem;
   }
+  
+  .current-time {
+    font-size: 3rem;
+    letter-spacing: 2px;
+  }
+  
+  .countdown-timer p {
+    font-size: 1.5rem;
+  }
 }
+
 @media (max-width: 480px) {
   .prayer-dashboard,
   .no-location-container {
     padding: 18px;
     margin-bottom: 20px;
   }
-  .right-panels {
-    margin-bottom: 20px;
-  }
-  .no-location-layout {
-    margin-bottom: 20px;
-  }
+  
   .prayer-times-grid-single {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
+  
   .prayer-time-card-single {
     padding: 12px 8px;
     height: 80px;
   }
+  
   .prayer-time-card-single h3 {
     font-size: 0.9rem;
   }
+  
   .prayer-time-card-single p {
     font-size: 1.3rem;
   }
+  
   .current-time {
     font-size: 2.5rem;
     letter-spacing: 2px;
   }
+  
   .countdown-timer p {
     font-size: 1.3rem;
   }
+  
   .location-display h2 {
     font-size: 1.8rem;
   }
+  
   .location-prompt h2 {
     font-size: 1.3rem;
   }
+  
   .location-prompt p {
     font-size: 0.95rem;
   }
+  
   .location-prompt .location-icon {
     font-size: 2.5rem;
   }
