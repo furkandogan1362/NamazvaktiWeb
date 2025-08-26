@@ -21,7 +21,7 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
         "Yatsı": "fas fa-moon"
     };
 
-    // Current time güncellemesi - timeZone değiştiğinde de güncelle
+    // Current time'ı her saniye güncelle
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(moment().tz(timeZone || 'Europe/Istanbul'));
@@ -29,15 +29,10 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
         return () => clearInterval(timer);
     }, [timeZone]);
 
-    // Prayer data değiştiğinde hesaplamaları sıfırla ve yeniden yap
+    // Prayer data ve current time değiştiğinde hesaplamaları yap
     useEffect(() => {
-        // Prayer data veya timeZone değiştiğinde state'leri sıfırla
-        setTodayPrayers(null);
-        setNextPrayer({ name: '', time: null });
-        setCountdown('');
-
-        if (prayerData && prayerData.length > 0 && timeZone) {
-            const now = moment().tz(timeZone);
+        if (prayerData && prayerData.length > 0 && timeZone && currentTime) {
+            const now = currentTime.clone();
             const todayStr = now.format('YYYY-MM-DD');
             const foundToday = prayerData.find(day => day.date.startsWith(todayStr));
             
@@ -53,18 +48,21 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
                     "Yatsı": foundToday.isha
                 };
 
-                // Bir sonraki namaz vaktini bul
                 let nextPrayerFound = false;
-                for (const [name, timeStr] of Object.entries(prayerTimes)) {
-                    const prayerDateTime = moment.tz(`${todayStr}T${timeStr}`, timeZone);
-                    if (prayerDateTime.isAfter(now)) {
-                        setNextPrayer({ name, time: prayerDateTime });
+                const sortedPrayerTimes = Object.entries(prayerTimes).map(([name, timeStr]) => ({
+                    name,
+                    time: moment.tz(`${todayStr}T${timeStr}`, timeZone)
+                }));
+                
+                for (const prayer of sortedPrayerTimes) {
+                    if (prayer.time.isAfter(now)) {
+                        setNextPrayer({ name: prayer.name, time: prayer.time });
                         nextPrayerFound = true;
                         break;
                     }
                 }
 
-                // Bugünün tüm namaz vakitleri geçtiyse yarının imsak vaktini al
+                // Bu blok, GPS ile tek günlük veri geldiğinde gece yarısı sorunu yaşanmaması için çok önemlidir
                 if (!nextPrayerFound) {
                     const tomorrow = now.clone().add(1, 'day');
                     const tomorrowStr = tomorrow.format('YYYY-MM-DD');
@@ -73,14 +71,19 @@ const PrayerDashboard = ({ prayerData, locationInfo, loading, error, timeZone })
                         const nextFajrTime = moment.tz(`${tomorrowStr}T${tomorrowPrayers.fajr}`, timeZone);
                         setNextPrayer({ name: "İmsak", time: nextFajrTime });
                     } else {
-                        // Yarının verisi yoksa bugünün imsak vaktini yarına taşı
+                        // Eğer yarının verisi yoksa (GPS durumu), bugünün imsak vaktini yarına taşı
                         const nextFajrTime = moment.tz(`${todayStr}T${foundToday.fajr}`, timeZone).add(1, 'day');
                         setNextPrayer({ name: "İmsak", time: nextFajrTime });
                     }
                 }
             }
+        } else {
+            // Veri yoksa state'leri sıfırla
+            setTodayPrayers(null);
+            setNextPrayer({ name: '', time: null });
+            setCountdown('');
         }
-    }, [prayerData, timeZone]); // currentTime'ı dependency'den çıkardık
+    }, [prayerData, timeZone, currentTime]);
 
     // Geri sayım hesaplaması
     useEffect(() => {
