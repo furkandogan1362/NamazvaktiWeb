@@ -81,36 +81,17 @@ function App() {
     return 'unknown';
   };
 
-  // Hata mesajları için yardımcı fonksiyon
-  const getLocationErrorMessage = (error) => {
-    switch(error.code) {
-      case error.PERMISSION_DENIED:
-        return "Konum erişim izni reddedildi. Lütfen tarayıcı ayarlarınızdan konum erişimine izin verin.";
-      case error.POSITION_UNAVAILABLE:
-        return "Konum bilgisi mevcut değil. Lütfen GPS'inizin açık olduğundan emin olun.";
-      case error.TIMEOUT:
-        return "Konum alınırken zaman aşımı oluştu. Lütfen tekrar deneyin.";
-      default:
-        return "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin.";
-    }
-  };
-
-  // Mobil cihaz için konum ayarlarını açma rehberi
-  const showLocationSettingsGuide = () => {
+  // Mobil cihazlar için konum durumu hatırlatma mesajı
+  const getLocationReminderMessage = () => {
     const userAgent = navigator.userAgent;
-    let message = "Konum servislerinizi açmak için:\n\n";
     
     if (/iPhone|iPad/.test(userAgent)) {
-      message += "iOS: Ayarlar → Gizlilik ve Güvenlik → Konum Servisleri → Açık\n";
-      message += "Safari: Ayarlar → Safari → Konum → İzin Ver";
+      return "Konum erişimi reddedildi. Lütfen cihazınızın konum servislerinin açık olduğundan emin olun. (Ayarlar → Gizlilik ve Güvenlik → Konum Servisleri)";
     } else if (/Android/.test(userAgent)) {
-      message += "Android: Ayarlar → Konum → Açık\n";
-      message += "Chrome: Ayarlar → Site Ayarları → Konum → İzin Ver";
+      return "Konum erişimi reddedildi. Lütfen cihazınızın konum servislerinin açık olduğundan emin olun. (Ayarlar → Konum)";
     } else {
-      message += "Cihazınızın konum ayarlarını kontrol edin ve tarayıcınıza konum erişimi verin.";
+      return "Konum erişimi reddedildi. Lütfen cihazınızın konum servislerinin açık olduğundan emin olun.";
     }
-    
-    alert(message);
   };
 
   // Geliştirilmiş GPS konum alma fonksiyonu
@@ -125,17 +106,15 @@ function App() {
       return;
     }
 
+    const isMobile = isMobileDevice();
+
     try {
       // Konum izni durumunu kontrol et
       const permissionStatus = await checkLocationPermission();
       
       if (permissionStatus === 'denied') {
-        const isMobile = isMobileDevice();
         if (isMobile) {
-          setError('Konum erişim izni reddedildi. Lütfen cihaz ayarlarınızdan konum servislerini açın.');
-          setTimeout(() => {
-            showLocationSettingsGuide();
-          }, 1000);
+          setError(getLocationReminderMessage());
         } else {
           setError('Konum erişim izni reddedildi. Lütfen tarayıcı ayarlarınızdan bu siteye konum erişimi verin.');
         }
@@ -172,17 +151,24 @@ function App() {
     } catch (geoError) {
       console.error("GPS Konum hatası:", geoError);
       
-      const isMobile = isMobileDevice();
-      let errorMessage = getLocationErrorMessage(geoError);
+      let errorMessage = '';
       
-      // Mobil cihazlar için özel mesajlar
-      if (isMobile && geoError.code === geoError.PERMISSION_DENIED) {
-        errorMessage = "Konum erişim izni reddedildi. Cihaz ayarlarınızdan konum servislerini açın.";
-        setTimeout(() => {
-          showLocationSettingsGuide();
-        }, 1000);
-      } else if (isMobile && geoError.code === geoError.POSITION_UNAVAILABLE) {
-        errorMessage = "Konum bulunamadı. GPS'inizin açık olduğundan ve açık bir alanda olduğunuzdan emin olun.";
+      switch(geoError.code) {
+        case geoError.PERMISSION_DENIED:
+          errorMessage = isMobile ? 
+            getLocationReminderMessage() :
+            "Konum erişim izni reddedildi. Lütfen tarayıcı ayarlarınızdan konum erişimi verin.";
+          break;
+        case geoError.POSITION_UNAVAILABLE:
+          errorMessage = isMobile ? 
+            "Konum bulunamadı. GPS'inizin açık olduğundan ve açık bir alanda olduğunuzdan emin olun." :
+            "Konum bilgisi mevcut değil. Lütfen GPS'inizin açık olduğundan emin olun.";
+          break;
+        case geoError.TIMEOUT:
+          errorMessage = "Konum alınırken zaman aşımı oluştu. Lütfen GPS'inizin açık olduğundan emin olun.";
+          break;
+        default:
+          errorMessage = "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin.";
       }
       
       setError(errorMessage);
